@@ -3,10 +3,12 @@ package com.adisvara.CarRentalProject.service.impl;
 import com.adisvara.CarRentalProject.model.Customer;
 import com.adisvara.CarRentalProject.repository.CustomerRepository;
 import com.adisvara.CarRentalProject.service.CustomerService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
 
@@ -38,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
             updatedCustomer.setEmail(customer.getEmail());
             updatedCustomer.setPhoneNumber(customer.getPhoneNumber());
 
-            return updatedCustomer;
+            return customerRepository.save(updatedCustomer);
         }
 
         return null;
