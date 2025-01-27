@@ -33,9 +33,9 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer updateCustomer(Long id, Customer customer) {
-        Optional<Customer> exisitingCustomer = customerRepository.findById(id);
-        if(exisitingCustomer.isPresent()){
-            Customer updatedCustomer = exisitingCustomer.get();
+        Optional<Customer> existingCustomer = customerRepository.findById(id);
+        if(existingCustomer.isPresent()){
+            Customer updatedCustomer = existingCustomer.get();
             updatedCustomer.setName(customer.getName());
             updatedCustomer.setEmail(customer.getEmail());
             updatedCustomer.setPhoneNumber(customer.getPhoneNumber());
