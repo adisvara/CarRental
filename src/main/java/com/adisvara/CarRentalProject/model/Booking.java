@@ -1,16 +1,20 @@
 package com.adisvara.CarRentalProject.model;
 
 import com.adisvara.CarRentalProject.customAnnotation.ValidDateRange;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@Data
 @ValidDateRange(message = "Start date should be before from END DATE")
 @Entity
+@Table(name = "bookings")
 public class Booking {
 
     @Id
@@ -27,12 +31,14 @@ public class Booking {
     @JoinColumn(name = "car_id", nullable = false)
     private Car car;
 
-    @NotNull
+    @NotNull(message = "Start date is required")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @FutureOrPresent(message = "Start Date cannot be in the past")
     @Column(nullable = false)
     private LocalDate startDate;
 
-    @NotNull
+    @NotNull(message = "End date is required")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @FutureOrPresent(message = "End date cannot be in the past")
     @Column(nullable = false)
     private LocalDate endDate;
@@ -41,6 +47,9 @@ public class Booking {
     //@DecimalMin(value = "0.0", inclusive = false, message = "Total price must be greater than 0")
     //@Column(nullable = false)
     private double totalPrice;
+
+    @Column(nullable = false)
+    private String status = "PENDING";
 
     @PrePersist
     @PreUpdate
@@ -53,6 +62,19 @@ public class Booking {
 
             this.totalPrice = pricePerDay * (days>0 ? days:1);
         }
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (status == null) {
+            status = "PENDING";
+        }
+        calculateTotalPrice();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        calculateTotalPrice();
     }
 
     public Booking() {
